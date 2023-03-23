@@ -1,4 +1,4 @@
-# ToDo List
+# Todo List
 
 ## How to use
 
