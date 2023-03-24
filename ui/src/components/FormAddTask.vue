@@ -1,6 +1,6 @@
 <template>
     <form>
-        <h1 class="my-3">Tasks <span class="text-muted">({{ completedTasks }})</span></h1>
+        <h1 class="my-3">Tasks <span class="text-secondary">({{ completedTasks }})</span></h1>
         <div class="input-group mb-3">
             <input type="text" ref="input" class="form-control rounded-0" placeholder="New task" id="input-add-task" />
             <button ref="button" class="btn btn-success rounded-0" type="button" id="input-add-task"
