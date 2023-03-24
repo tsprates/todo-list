@@ -7,21 +7,20 @@
                 @click="addNewTask"><span v-if="loading" class="spinner-border text-light spinner-border-sm"
                     role="status"></span><span v-else>+ Add</span></button>
         </div>
+        <list-tasks :tasks="tasks" @updateTask="updateCompletedTasks"></list-tasks>
     </form>
-    <div v-if="tasks.length === 0"><span class="spinner-border spinner-border-sm" role="status"></span> Loading...</div>
-    <div v-for="task in tasks" :key="task.id" :id="`task-item-${task.id}`"
-        class="task-item my-3 border p-0 mb-2 rounded-0 text-justify clearfix"
-        :class="[task.status === 'completed' ? 'completed border-success alert alert-success text-decoration-line-through' : 'incompleted']">
-        <span class="task-item-text" style="margin-left: 10px; width: 100%;" @click.prevent="markAsCompleted">{{ task.text }}</span> <span
-            class="remove btn btn-danger float-end rounded-0" :id="`remove-task-item-${task.id}`"
-            @click.prevent="removeTask">&times;</span></div>
 </template>
 
 <script>
+import ListTasks from './ListTasks.vue'
 import http from '../http';
 
 export default {
     name: 'FormAddTask',
+    components: {
+        ListTasks
+    },
+    emits: ["updateTask"],
     data() {
         return {
             tasks: [],
@@ -44,7 +43,6 @@ export default {
                 alert('The task should have a message.');
                 return;
             }
-
             this.loading = true;
             http.post('api/tasks', { text: text })
                 .then(response => {
@@ -54,47 +52,9 @@ export default {
                 .catch(error => console.log(error))
                 .finally(() => this.loading = false);
         },
-        removeTask(event) {
-            const id = event.target.getAttribute('id').match(/remove-task-item-(\d+)/)[1];
-            http.delete(`api/tasks/${id}`)
-                .then(() => {
-                    event.target.closest(".task-item").remove();
-                })
-                .catch(error => console.log(error));
-        },
-        markAsCompleted(event) {
-            const parent = event.target.closest('.task-item');
-            const id = parent.getAttribute('id').match(/task-item-(\d+)/)[1];
-            const newStatus = /\bsuccess\b/.test(parent.className) ? 'incompleted' : 'completed';
-
-            http.put(`api/tasks/${id}`, { status: newStatus })
-                .then(({ data }) => {
-                    const classes = "border-success alert alert-success text-decoration-line-through".split(" ");
-                    for (let index in classes) {
-                        parent.classList.toggle(classes[index]);
-                    }
-
-                    if (newStatus === 'completed') {
-                        this.completedTasks += 1;
-                    } else {
-                        this.completedTasks -= 1;
-                    }
-
-                    console.log(data);
-                    this.tasks.filter(task => {
-                        task.id === id;
-                    }).forEach((task) => {
-                        task.status = newStatus;
-                    })
-                })
-                .catch(error => console.log(error));
+        updateCompletedTasks(value) {
+            this.completedTasks += value;
         }
     }
 }
 </script>
-
-<style scoped>
-.task-item-text {
-    cursor: pointer;
-}
-</style>
