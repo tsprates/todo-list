@@ -2,7 +2,8 @@
     <form>
         <h1 class="my-3">Tasks <span class="text-secondary">({{ completedTasks }})</span></h1>
         <div class="input-group mb-3">
-            <input type="text" ref="input" class="form-control rounded-0" placeholder="New task" id="input-add-task" />
+            <input type="text" ref="input" class="form-control rounded-0 shadow-none" placeholder="New task"
+                id="input-add-task" />
             <button ref="button" class="btn btn-success rounded-0" type="button" id="input-add-task"
                 @click="addNewTask"><span v-if="loading" class="spinner-border text-light spinner-border-sm"
                     role="status"></span><span v-else>+ Add</span></button>
